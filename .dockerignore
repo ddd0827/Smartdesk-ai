@@ -1,0 +1,13 @@
+.venv
+__pycache__
+*.pyc
+.git
+.gitignore
+.env
+data
+tests
+# Only the top-level docs/ (screenshots etc.) is excluded. seed/docs/*.md
+# must stay in the build context so the container can auto-seed the demo KB.
+docs
+.ruff_cache
+.pytest_cache

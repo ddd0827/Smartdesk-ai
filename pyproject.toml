@@ -1,0 +1,23 @@
+[project]
+name = "smartdesk-ai"
+version = "0.1.0"
+description = "SmartDesk AI - an after-sales customer support agent with RAG, tool calling and a FastAPI backend"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "live: calls a real LLM API and is skipped unless explicitly enabled",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["B008"]

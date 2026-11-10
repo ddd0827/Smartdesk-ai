@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e2a25">
+  <title>智服 SmartDesk · 售后客服智能体</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230f766e'/%3E%3Ctext x='16' y='22' font-size='17' text-anchor='middle' fill='white' font-family='sans-serif'%3E智%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="app">
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">智</div>
+        <div class="brand-text">
+          <strong>智服</strong>
+          <span>SmartDesk AI</span>
+        </div>
+      </div>
+
+      <button class="new-chat" id="newChatBtn" type="button">
+        <span class="plus">＋</span> 新对话
+      </button>
+
+      <div class="side-section sessions-section">
+        <div class="section-title">
+          <span>最近会话</span>
+          <span class="count" id="sessionCount"></span>
+        </div>
+        <div class="session-list" id="sessionList"></div>
+      </div>
+
+      <div class="side-section docs-section">
+        <div class="section-title">
+          <span>知识库</span>
+          <span class="section-actions">
+            <button class="mini-btn" id="reindexBtn" type="button" title="重建索引">↻</button>
+            <button class="mini-btn" id="uploadBtn" type="button" title="上传文档">＋</button>
+          </span>
+        </div>
+        <div class="doc-list" id="docList"></div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="stat-row">
+          <span id="statDocs">…</span>
+          <span id="statChunks"></span>
+        </div>
+        <div class="mode-row">
+          <span class="dot" id="modeDot"></span>
+          <span id="modeText">连接中…</span>
+        </div>
+        <div class="demo-note">演示品牌：悦家电器 · 客户 C001</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="打开菜单">☰</button>
+        <div class="topbar-title">
+          <h1>售后客服智能体</h1>
+          <span class="badge" id="modeBadge">…</span>
+        </div>
+        <div class="topbar-right">
+          <span class="customer-chip" id="customerChip">客户 C001</span>
+        </div>
+      </header>
+
+      <section class="chat-scroll" id="chatScroll">
+        <div class="empty-state" id="emptyState">
+          <div class="hero-mark">智</div>
+          <h2>你好，我是智服</h2>
+          <p class="hero-sub">悦家电器售后客服。可以问我退换货、物流、保修、发票等问题，也可以提供订单号查询进度。</p>
+          <div class="suggestions" id="suggestions"></div>
+          <p class="empty-foot">回答会引用知识库来源，并展示工具调用过程。</p>
+        </div>
+        <div class="messages" id="messages" aria-live="polite"></div>
+      </section>
+
+      <footer class="composer-area">
+        <form class="composer" id="composer">
+          <textarea id="messageInput" rows="1" maxlength="2000" placeholder="描述你的问题，例如：订单 A2026001 物流三天没更新，能退货吗？" aria-label="输入消息"></textarea>
+          <button type="submit" class="send-btn" id="sendBtn" aria-label="发送">
+            <svg id="sendIcon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path d="M4.2 11.3 19.1 4.6c.6-.3 1.2.3.9.9l-6.7 14.9c-.3.6-1.1.6-1.4 0l-2.3-5.1-5.1-2.3c-.6-.3-.6-1.1.7-1.7Z" fill="currentColor"/>
+            </svg>
+            <span id="stopIcon" class="stop-icon hidden" aria-hidden="true"></span>
+          </button>
+        </form>
+        <div class="composer-hint">AI 生成内容请核对；复杂问题可让智服创建工单转人工。</div>
+      </footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="uploadModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="uploadTitle">
+      <div class="modal-head">
+        <h3 id="uploadTitle">上传知识库文档</h3>
+        <button class="icon-btn" type="button" data-close="uploadModal" aria-label="关闭">×</button>
+      </div>
+      <p class="modal-desc">支持 Markdown、TXT、PDF，单文件不超过 <span id="uploadLimit">5</span> MB。上传后自动切分并建立索引。</p>
+      <div class="dropzone" id="dropzone" role="button" tabindex="0">
+        <input type="file" id="fileInput" accept=".md,.markdown,.txt,.pdf" hidden>
+        <span class="drop-icon">↑</span>
+        <span><strong>点击选择</strong>或拖拽文件到这里</span>
+        <span class="file-name" id="fileName"></span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost" type="button" data-close="uploadModal">取消</button>
+        <button class="btn primary" id="uploadConfirm" type="button" disabled>开始上传</button>
+      </div>
+      <div class="modal-status hidden" id="uploadStatus"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="tokenModal">
+    <div class="modal small" role="dialog" aria-modal="true" aria-labelledby="tokenTitle">
+      <div class="modal-head">
+        <h3 id="tokenTitle">管理员令牌</h3>
+        <button class="icon-btn" type="button" data-close="tokenModal" aria-label="关闭">×</button>
+      </div>
+      <p class="modal-desc">服务器启用了 ADMIN_TOKEN。请输入令牌后再操作文档。</p>
+      <input class="text-input" id="tokenInput" type="password" placeholder="X-Admin-Token" autocomplete="off">
+      <div class="modal-actions">
+        <button class="btn ghost" type="button" data-close="tokenModal">取消</button>
+        <button class="btn primary" id="tokenConfirm" type="button">保存令牌</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast" role="status"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

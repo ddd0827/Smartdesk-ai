@@ -1,0 +1,147 @@
+{
+  "version": 2,
+  "note": "冻结于 2026-11-09。题目为口语化改写，指标按“答案片段命中”计算：只有检索到同时包含全部关键词的单个分块才算命中。这是小样本方向性评估，不做显著性结论；运行前不要根据结果修改题目。",
+  "k": 3,
+  "questions": [
+    {
+      "id": "q01",
+      "question": "顾客收到货后想反悔，在什么条件下可以退货？",
+      "expected_docs": ["01-退换货政策.md"],
+      "keywords": ["7 个自然日", "未安装", "不影响二次销售"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q02",
+      "question": "没有理由退货的话，寄回去的快递费谁出？",
+      "expected_docs": ["01-退换货政策.md"],
+      "keywords": ["寄回运费由消费者承担"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q03",
+      "question": "商品有故障，签收后两周内还能换新吗？",
+      "expected_docs": ["01-退换货政策.md"],
+      "keywords": ["15 个自然日", "质量问题"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q04",
+      "question": "滤芯拆开包装了还可以退吗？",
+      "expected_docs": ["01-退换货政策.md"],
+      "keywords": ["滤芯", "拆封", "不支持"],
+      "category": "keyword"
+    },
+    {
+      "id": "q05",
+      "question": "快递信息几天不更新需要联系客服处理？",
+      "expected_docs": ["02-物流异常与丢件处理.md"],
+      "keywords": ["72 小时", "3 个自然日"],
+      "category": "keyword"
+    },
+    {
+      "id": "q06",
+      "question": "包裹确认丢了，商家会重新发一份吗？",
+      "expected_docs": ["02-物流异常与丢件处理.md"],
+      "keywords": ["补发", "7 个自然日"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q07",
+      "question": "收到货发现箱子破了，最晚什么时候反馈？",
+      "expected_docs": ["02-物流异常与丢件处理.md", "01-退换货政策.md"],
+      "keywords": ["48 小时", "照片", "视频"],
+      "category": "multi_doc"
+    },
+    {
+      "id": "q08",
+      "question": "机器和核心零件分别保修几年？",
+      "expected_docs": ["03-产品保修与维修.md"],
+      "keywords": ["整机保修 1 年", "主要部件", "3 年"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q09",
+      "question": "自己摔坏或者进水了还免费修吗？",
+      "expected_docs": ["03-产品保修与维修.md"],
+      "keywords": ["人为损坏", "进水", "不在免费保修范围内"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q10",
+      "question": "修得太久有没有备用机可以申请？",
+      "expected_docs": ["03-产品保修与维修.md"],
+      "keywords": ["15 天", "备用机"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q11",
+      "question": "消费多少钱能升到金卡？",
+      "expected_docs": ["04-会员积分与优惠券.md"],
+      "keywords": ["5000 元", "金卡"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q12",
+      "question": "积分怎么当钱花，多少分抵一块？",
+      "expected_docs": ["04-会员积分与优惠券.md"],
+      "keywords": ["100 积分", "1 元"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q13",
+      "question": "满减券和折扣券能同时用吗？",
+      "expected_docs": ["04-会员积分与优惠券.md"],
+      "keywords": ["满减券或折扣券", "不可叠加"],
+      "category": "keyword"
+    },
+    {
+      "id": "q14",
+      "question": "电子普票多久能收到？",
+      "expected_docs": ["05-发票与支付退款.md"],
+      "keywords": ["24 小时", "电子普通发票"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q15",
+      "question": "用银行卡付款，退款要等几天？",
+      "expected_docs": ["05-发票与支付退款.md"],
+      "keywords": ["银行卡", "3-7 个工作日"],
+      "category": "keyword"
+    },
+    {
+      "id": "q16",
+      "question": "客服一直不解决，什么情况可以找主管？",
+      "expected_docs": ["06-投诉与升级流程.md"],
+      "keywords": ["48 小时", "2 次", "主管"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q17",
+      "question": "售后申请两天没人理，有什么补偿？",
+      "expected_docs": ["06-投诉与升级流程.md"],
+      "keywords": ["10 元", "无门槛优惠券"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q18",
+      "question": "净水器底下渗水，应该先检查哪里？",
+      "expected_docs": ["07-安装使用与故障排查.md"],
+      "keywords": ["进水管", "密封圈", "排水管"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q19",
+      "question": "公司一次买六十台，能打几折？",
+      "expected_docs": ["08-企业采购与批量订单.md"],
+      "keywords": ["50-99 台", "92 折"],
+      "category": "paraphrase"
+    },
+    {
+      "id": "q20",
+      "question": "公司团购一批机器，一般多久能交货？",
+      "expected_docs": ["08-企业采购与批量订单.md"],
+      "keywords": ["7-15 个工作日", "交付周期"],
+      "category": "paraphrase"
+    }
+  ]
+}

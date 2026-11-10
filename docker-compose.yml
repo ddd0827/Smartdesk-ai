@@ -1,0 +1,29 @@
+services:
+  smartdesk:
+    build: .
+    image: smartdesk-ai:latest
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      APP_HOST: 0.0.0.0
+      APP_PORT: 8000
+      DATA_DIR: /app/data
+    ports:
+      - "8000:8000"
+    volumes:
+      - smartdesk-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+
+volumes:
+  smartdesk-data:

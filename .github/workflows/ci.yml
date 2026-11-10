@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Tests and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Ruff
+        run: ruff check app tests scripts
+
+      - name: JavaScript syntax
+        run: node --check app/web/app.js
+
+      - name: Pytest
+        run: pytest -q
+
+  docker:
+    name: Build and smoke-test image
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t smartdesk-ai:ci .
+
+      - name: Start container
+        run: |
+          docker run -d --name smartdesk-ci \
+            -p 8001:8000 \
+            -e LLM_PROVIDER=mock \
+            -e AUTO_SEED=true \
+            -e DATA_DIR=/app/data \
+            smartdesk-ai:ci
+
+      - name: Wait for health and verify seed data
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8001/api/health > /tmp/health.json; then
+              break
+            fi
+            sleep 2
+          done
+          test -s /tmp/health.json
+          cat /tmp/health.json
+          python3 - <<'PY'
+          import json
+          import urllib.request
+
+          with urllib.request.urlopen(
+              "http://127.0.0.1:8001/api/documents", timeout=10
+          ) as response:
+              data = json.load(response)
+          assert data["count"] == 8, data
+          assert data["chunks"] == 41, data
+          print("seed OK:", data["count"], "documents,", data["chunks"], "chunks")
+          PY
+
+      - name: Verify SSE chat in container
+        run: |
+          curl -sN --max-time 30 -X POST http://127.0.0.1:8001/api/chat/stream \
+            -H 'Content-Type: application/json' \
+            -d '{"message":"hello"}' > /tmp/stream.txt
+          grep -q "event: done" /tmp/stream.txt
+          grep -q "event: token" /tmp/stream.txt
+          echo "SSE OK"
+
+      - name: Container logs
+        if: always()
+        run: docker logs smartdesk-ci
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f smartdesk-ci || true
